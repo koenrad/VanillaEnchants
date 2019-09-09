@@ -23,7 +23,6 @@ public class EnchantEvents implements Listener {
     private VanillaEnchants plugin;
     private Map<String, Object> limits;
     private boolean debug;
-    private boolean enable_unsafe_enchants;
 
 
     public EnchantEvents( VanillaEnchants plugin) {
