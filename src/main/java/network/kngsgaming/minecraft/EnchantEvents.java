@@ -1,6 +1,7 @@
 package network.kngsgaming.minecraft;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
@@ -202,6 +203,23 @@ public class EnchantEvents implements Listener {
                                     //We now know the player has attempted to combine two items!
                                     //clone the result
                                     ItemStack itemToGive = event.getCurrentItem().clone();
+
+                                    //let's make SURE that the item given is only 1!
+                                    if (itemToGive.getAmount() > 1) {
+                                        itemToGive.setAmount(1);
+                                    }
+
+                                    //Sound.BLOCK_ANVIL_USE;
+
+                                    //If the first item is a stack, we should return it - 1
+                                    if (items[0].getAmount() > 1){
+                                        ItemStack returnedStack = items[0].clone();
+                                        returnedStack.setAmount(returnedStack.getAmount() - 1);
+                                        if(player.getInventory().addItem(returnedStack).size() != 0) {
+                                            player.getWorld().dropItem(player.getLocation(), returnedStack);
+                                        }
+                                    }
+
                                     //delete the 3 items in the anvil!
                                     eventInventory.remove(eventInventory.getItem(0));
                                     eventInventory.remove(eventInventory.getItem(1));
@@ -210,6 +228,8 @@ public class EnchantEvents implements Listener {
                                     if(player.getInventory().addItem(itemToGive).size() != 0) {
                                         player.getWorld().dropItem(player.getLocation(), itemToGive);
                                     }
+
+                                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.0f);
 
                                 }
                             }
