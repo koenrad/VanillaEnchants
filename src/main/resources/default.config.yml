@@ -1,0 +1,76 @@
+#
+# VanillaEnchants Configuration File
+#
+# About editing this file:
+# - DO NOT USE TABS. You MUST use spaces or Bukkit will complain and log errors.
+# - If you want to check the format of this file before using it,
+#   use http://yaml-online-parser.appspot.com/ to validate it.
+# - Lines starting with # are comments, and will be ignored.
+#
+
+# You can disable the plugin with this value
+enable_vanilla_enchants: "true"  # "true" or "false"
+
+# Set this to "true" to find any unknown enchantment names
+# The enchantment names of each enchantment on the resulting item will be
+# output to the console, so an easy way to find it would be to combine two books.
+# ONLY OUTPUTS FOR EVENTS FROM OPS
+debug: "false"
+
+# By default VanillaEnchants will use the default enchant limits as seen below. (as of 1.14.4)
+#
+# To set a limit to infinity (or rather, MAX_INT), comment out the entry by
+# putting a '#' at the beginning of the line (or deleted the line)
+#
+# THIS MEANS ANY ENCHANTMENT NOT IN limits WILL HAVE NO LIMIT
+#
+# If a new enchantment is added to minecraft, you just need to add the enchantment's
+# minecraft name/id below to set the limit as desired. (use debug flag to find it!)
+#
+# Setting the limits lower than the defaults will not affect enchantments from
+# the enchantment table.
+# The only thing affected is the anvil repair/combine mechanic. Enchantments will
+# not be removed or lowered if the limit is lower that the items current level, it
+# will simply not be possible to upgrade that enchantment.
+
+# If you wanted to disable upgrading an enchantment's level you can set the limit to 1 (or 0)
+# this could be fun for a more "hardcore" vanilla experience.
+
+limits:
+  aqua_affinity: 1
+  bane_of_arthropods: 5
+  blast_protection: 4
+  channeling: 1
+  binding_curse: 1       # this is Curse of Binding
+  vanishing_curse: 1     # this is Curse of Vanishing
+  depth_strider: 3
+  efficiency: 5
+  feather_falling: 4
+  fire_aspect: 2
+  fire_protection: 4
+  flame: 1
+  fortune: 3
+  frost_walker: 2
+  imaling: 5
+  infinity: 1
+  knockback: 2
+  looting: 3
+  loyalty: 3
+  luck_of_the_sea: 3
+  lure: 3
+  mending: 1
+  multishot: 1
+  piercing: 4
+  power: 5
+  projectile_protection: 4
+  protection: 4
+  punch: 2
+  quick_charge: 3
+  respiration: 3
+  riptide: 3
+  sharpness: 5
+  silk_touch: 1
+  smite: 5
+  sweeping: 3            # this is Sweeping Edge
+  thorns: 3
+  unbreaking: 3
