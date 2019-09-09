@@ -27,7 +27,7 @@ public class VanillaEnchants extends JavaPlugin {
         }
 
         try {
-            config.getString("enable_vanilla_enchants").toLowerCase().equals("true");
+            enabled = config.getString("enable_vanilla_enchants").toLowerCase().equals("true");
         } catch (Error e) {
             printToConsole(ChatColor.RED + "Could not get config, disabling VanillaEnchants");
             enabled = false;
