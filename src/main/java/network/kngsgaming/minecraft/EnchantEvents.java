@@ -19,14 +19,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnchantEvents implements Listener {
-    private VanillaEnchants plugin;
+//     private VanillaEnchants plugin;
     private Map<String, Object> limits;
-    private boolean debug;
+    private boolean debug = false;
     private boolean enable_unsafe_enchants;
 
 
     public EnchantEvents( VanillaEnchants plugin) {
-        this.plugin = plugin;
+//         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
         ConfigurationSection section = plugin.config.getConfigurationSection("limits");
@@ -37,9 +37,8 @@ public class EnchantEvents implements Listener {
             plugin.printToConsole(ChatColor.RED + "ERROR: could not get limits from config");
         }
         try {
-            debug = plugin.config.getString("debug").toLowerCase().equals("true");
+            debug = plugin.config.getString("debug").equalsIgnoreCase("true");
         } catch (Error e){
-            debug = false;
             plugin.printToConsole("debug: false");
         }
 
@@ -221,16 +220,17 @@ public class EnchantEvents implements Listener {
     }
 
     //Check to see if this enchantment and level are within the config defined limits
+    //Unused?
     private boolean isValidEnchantLevel(Enchantment enchantment, int level) {
         //assume no limit!
         int limit = Integer.MAX_VALUE;
         String enchanmentName = enchantment.getKey().getKey();
         if (limits.containsKey(enchanmentName)) {
-            limit  = 0;
             try {
-                //try to cast the object to an Integer
-                limit = (Integer) limits.get(enchanmentName);
-            } catch(Exception e) {
+                //parsing to an Integer
+                limit = Integer.parseInt(limits.get(enchanmentName));
+            } catch(NumberFormatException e) {
+                limit  = 0;
                 plugin.printToConsole(ChatColor.RED + "ERROR: could not get limit for: " + enchanmentName);
                 plugin.printToConsole(ChatColor.BLUE + "Defaulting to limit 0 for enchantment: " + enchanmentName);
             }
