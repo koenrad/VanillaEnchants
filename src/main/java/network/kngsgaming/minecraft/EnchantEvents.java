@@ -115,9 +115,9 @@ public class EnchantEvents implements Listener {
 
                 //debug for ops
                 if (debug && event.getView().getPlayer().isOp()) {
-                    plugin.getLogger().info("DEBUG INFO FOR " + event.getView().getPlayer().getName());
+                    plugin.printToConsole(ChatColor.AQUA + "DEBUG INFO FOR " + event.getView().getPlayer().getName());
                     for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
-                        plugin.getLogger().info("Enchantment found: " + entry.getKey().getKey().getKey());
+                        plugin.printToConsole("Enchantment found: " + ChatColor.GREEN + entry.getKey().getKey().getKey());
                     }
                 }
 

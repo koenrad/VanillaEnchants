@@ -13,27 +13,31 @@ public class VanillaEnchants extends JavaPlugin {
     private File configFile = new File(getDataFolder(), "config.yml");
 
     public YamlConfiguration config = new YamlConfiguration();
+    private boolean enabled;
 
     @Override
     public void onEnable() {
-        ConsoleCommandSender console = this.getServer().getConsoleSender();
         initConfigFile();
         try {
             config.load(configFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            printToConsole(ChatColor.RED + "IOException when loading config");
         } catch (InvalidConfigurationException e) {
-
-            console.sendMessage(chatPrepend() + ChatColor.RED + "[VanillaEnchants] Invalid Configuration File");
-            //getLogger().info(ChatColor.RED + "Invalid Configuration File");
-            //e.printStackTrace();
+            printToConsole(ChatColor.RED + "Invalid Configuration File");
         }
 
-        if ( config.getString("enable_vanilla_enchants").toLowerCase().equals("true")) {
-            console.sendMessage(chatPrepend() + ChatColor.GREEN + "Enabled");
+        try {
+            config.getString("enable_vanilla_enchants").toLowerCase().equals("true");
+        } catch (Error e) {
+            printToConsole(ChatColor.RED + "Could not get config, disabling VanillaEnchants");
+            enabled = false;
+        }
+
+        if (enabled) {
             EnchantEvents eventHandler = new EnchantEvents(this);
+            printToConsole(ChatColor.GREEN + "Enabled");
         } else {
-            console.sendMessage(chatPrepend() + ChatColor.RED + "Disabled");
+            printToConsole(ChatColor.RED + "Disabled");
         }
 
     }
