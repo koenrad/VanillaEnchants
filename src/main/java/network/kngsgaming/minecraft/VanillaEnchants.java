@@ -1,12 +1,10 @@
 package network.kngsgaming.minecraft;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.util.logging.Level;
 
 public class VanillaEnchants extends JavaPlugin {
 

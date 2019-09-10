@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -47,15 +46,10 @@ public class EnchantEvents implements Listener {
 
     @EventHandler
     public void onPrepareAnvilEvent(PrepareAnvilEvent event) {
-        //plugin.getLogger().info("PrepareAnvilEvent: " + event.getResult().getType().toString());
         AnvilInventory inventory = (AnvilInventory) event.getInventory();
         Map<String, Integer> limits = new HashMap<String, Integer>();
-        int finalRepairCost = inventory.getRepairCost();
-        limits.put("ARROW_DAMAGE", 6);
         inventory.setMaximumRepairCost(Integer.MAX_VALUE);
 
-
-        //String msg = inventory.getItem(1) != null ? inventory.getItem(2).toString() : "oops nada!";
         ItemStack leftItem = inventory.getItem(0);
         ItemStack rightItem = inventory.getItem(1);
         ItemStack resultItem;
@@ -157,17 +151,17 @@ public class EnchantEvents implements Listener {
                 }
 
                 event.setResult(resultItem);
-                finalRepairCost = inventory.getRepairCost();
+
+                int finalRepairCost = inventory.getRepairCost();
                 if (finalRepairCost > 40) {
                     event.getView().getPlayer().sendMessage(plugin.chatPrepend() + ChatColor.RED + "This repair costs: " + ChatColor.GREEN + finalRepairCost + ChatColor.RED + " levels.");
                 }
+                inventory.setRepairCost(finalRepairCost);
+                event.getView().setProperty(InventoryView.Property.REPAIR_COST, finalRepairCost);
 
             }
         }
-        // This will change the actuall inventory view's value for the repair cost?
-        // unfortunately it will not change if you are in survival mode and the repair
-        // costs more than 40 levels :(
-        event.getView().setProperty(InventoryView.Property.REPAIR_COST, finalRepairCost);
+
     }
 
     //Detect a player has repaired/combined an item!
@@ -179,11 +173,9 @@ public class EnchantEvents implements Listener {
 
             if(humanEntity instanceof Player){
                 Player player = (Player)humanEntity;
-                Inventory eventInventory = event.getInventory();
-
-                // g
-                if(eventInventory instanceof AnvilInventory){
-                    AnvilInventory anvilInventory = (AnvilInventory)eventInventory;
+                // Check if this event fired inside an anvil.
+                if(event.getInventory() instanceof AnvilInventory){
+                    final AnvilInventory anvilInventory = (AnvilInventory) event.getInventory();
                     InventoryView view = event.getView();
                     int rawSlot = event.getRawSlot();
 
@@ -196,40 +188,50 @@ public class EnchantEvents implements Listener {
 
                             // Make sure there are items in the first two anvil slots
                             if(items[0] != null && items[1] != null) {
-                                //if the player clicked an empty result slot, the material will be AIR, so ignore that!
+                                // if the player clicked an empty result slot, the material will be AIR, so ignore that!
                                 // Also ignore if the player clicked the items in the first two slots!
-                                if (event.getCurrentItem().getType() != Material.AIR && event.getCurrentItem() != items[0] && event.getCurrentItem() != items[1]) {
-                                    //We now know the player has attempted to combine two items!
-                                    //clone the result
-                                    ItemStack itemToGive = event.getCurrentItem().clone();
+                                if (event.getCurrentItem().getType() != Material.AIR && event.getCurrentItem() != items[0] && event.getCurrentItem() == items[1]) {
+                                    // We now know the player has attempted to combine two items!
+                                    // Now we make sure that the player has the levels required!
+                                    if (player.getLevel() >= anvilInventory.getRepairCost()) {
+                                        // Store these values before doing anything with the anvilInventory....
+                                        int repairCost = anvilInventory.getRepairCost();
+                                        int playerLevel = player.getLevel();
+                                        int resultantLevel = playerLevel - repairCost;
 
-                                    //let's make SURE that the item given is only 1!
-                                    if (itemToGive.getAmount() > 1) {
-                                        itemToGive.setAmount(1);
-                                    }
+                                        // clone the result item
+                                        ItemStack itemToGive = event.getCurrentItem().clone();
 
-                                    //Sound.BLOCK_ANVIL_USE;
-
-                                    //If the first item is a stack, we should return it - 1
-                                    if (items[0].getAmount() > 1){
-                                        ItemStack returnedStack = items[0].clone();
-                                        returnedStack.setAmount(returnedStack.getAmount() - 1);
-                                        if(player.getInventory().addItem(returnedStack).size() != 0) {
-                                            player.getWorld().dropItem(player.getLocation(), returnedStack);
+                                        // let's make SURE that the item given is only 1!
+                                        if (itemToGive.getAmount() > 1) {
+                                            itemToGive.setAmount(1);
                                         }
+
+                                        // If the first item is a stack, we should give it back (-1)
+                                        if (items[0].getAmount() > 1) {
+                                            ItemStack returnedStack = items[0].clone();
+                                            returnedStack.setAmount(returnedStack.getAmount() - 1);
+                                            if (player.getInventory().addItem(returnedStack).size() != 0) {
+                                                player.getWorld().dropItem(player.getLocation(), returnedStack);
+                                            }
+                                        }
+
+                                        // delete the 3 items in the anvil!
+                                        anvilInventory.remove(anvilInventory.getItem(0));
+                                        anvilInventory.remove(anvilInventory.getItem(1));
+                                        anvilInventory.remove(anvilInventory.getItem(2));
+
+                                        // give the player the clone of the result! (drop it on them if their inventory is full)
+                                        if (player.getInventory().addItem(itemToGive).size() != 0) {
+                                            player.getWorld().dropItem(player.getLocation(), itemToGive);
+                                        }
+
+                                        // Play the anvil sound on the player.
+                                        player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.0f);
+
+                                        //let's set players exp levels to what they should be after this repair
+                                        player.giveExpLevels(resultantLevel - playerLevel);
                                     }
-
-                                    //delete the 3 items in the anvil!
-                                    eventInventory.remove(eventInventory.getItem(0));
-                                    eventInventory.remove(eventInventory.getItem(1));
-                                    eventInventory.remove(eventInventory.getItem(2));
-                                    //give the player the clone of the result! (drop it on them if their inventory is full)
-                                    if(player.getInventory().addItem(itemToGive).size() != 0) {
-                                        player.getWorld().dropItem(player.getLocation(), itemToGive);
-                                    }
-
-                                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1.0f, 1.0f);
-
                                 }
                             }
                         }
