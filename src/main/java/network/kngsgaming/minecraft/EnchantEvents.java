@@ -190,7 +190,7 @@ public class EnchantEvents implements Listener {
                             if(items[0] != null && items[1] != null) {
                                 // if the player clicked an empty result slot, the material will be AIR, so ignore that!
                                 // Also ignore if the player clicked the items in the first two slots!
-                                if (event.getCurrentItem().getType() != Material.AIR && event.getCurrentItem() != items[0] && event.getCurrentItem() == items[1]) {
+                                if (event.getCurrentItem().getType() != Material.AIR && event.getCurrentItem() != items[0] && event.getCurrentItem() != items[1]) {
                                     // We now know the player has attempted to combine two items!
                                     // Now we make sure that the player has the levels required!
                                     if (player.getLevel() >= anvilInventory.getRepairCost()) {
