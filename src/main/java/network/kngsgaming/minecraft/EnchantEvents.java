@@ -13,10 +13,12 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class EnchantEvents implements Listener {
     private VanillaEnchants plugin;
@@ -105,7 +107,31 @@ public class EnchantEvents implements Listener {
                         }
                     }
                 }
-                resultItem = leftItem.clone();
+                
+                //check for repairability
+                boolean leftDamageable = leftItem.getItemMeta() instanceof Damageable;
+                boolean rightDamageable = rightItem.getItemMeta() instanceof Damageable;
+                if ( leftDamageable && rightDamageable ) {
+                    int damage0 = ((Damageable) leftItem.getItemMeta()).getDamage();
+                    int damage1 = ((Damageable) rightItem.getItemMeta()).getDamage();
+                    int maxdamage = (leftItem.getType()).getMaxDurability();
+                    //damage is calculated as "hits taken", not "life"
+                    int durability = (maxdamage - damage0) + (maxdamage - damage1);
+                    if (durability < maxdamage) { 
+                        durability = maxdamage - durability; 
+                    }
+                    else if (durability >= maxdamage) {
+                        durability = 0;
+                    }
+                    resultItem = leftItem.clone();
+                    ItemMeta resultMeta = resultItem.getItemMeta();
+                    ((Damageable) resultMeta).setDamage(durability);
+                    resultItem.setItemMeta(resultMeta);
+                }
+                //nothing to repair
+                else {
+                    resultItem = leftItem.clone();
+                }
 
                 //debug for ops
                 if (debug && event.getView().getPlayer().isOp()) {
