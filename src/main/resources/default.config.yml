@@ -71,6 +71,7 @@ limits:
   sharpness: 5
   silk_touch: 1
   smite: 5
+  soul_speed: 3
   sweeping: 3            # this is Sweeping Edge
   thorns: 3
   unbreaking: 3
