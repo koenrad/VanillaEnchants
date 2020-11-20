@@ -3,3 +3,4 @@ version: 1.2
 main: network.kngsgaming.minecraft.VanillaEnchants
 author: koenrad
 website: https://koenrad.macbri.de
+api-version: 1.13
