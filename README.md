@@ -111,6 +111,7 @@ limits:
   sharpness: 5
   silk_touch: 1
   smite: 5
+  soul_speed: 3
   sweeping: 3            # this is Sweeping Edge
   thorns: 3
   unbreaking: 3
@@ -121,10 +122,10 @@ limits:
 - If you shift click the resulting item, sometimes it will appear to have been duplicated (duplicate item disappears when interacting with it)
 - An enchanting book can be applied to ANY item.
 - If a player is in survival mode, and a repair costs more than 40 levels, the UI shows "TOO EXPENSIVE" (a chat message is sent to the player stating the actual cost). The repair still goes through
+- The resulting cost is just the sum of the resulting levels of all enchantments, rather than the mystical vanilla mechanics
 
 ## Contributing
 Pull requests are welcome!
 
 ## HELP I found a bug!
-
 Good work! Create an issue on GitHub and I will look into it as soon as I can.
