@@ -2,7 +2,7 @@
 
 VanillaEnchants is a Minecraft server plugin for Bukkit/Spigot that modifies the level cap of enchantments created by combining items on an anvil. For example if you combine two diamond pickaxes, each with Efficiency V, you get a pickaxe with Efficiency VI.
 
-Vanilla Enchants has been tested on `Minecraft 1.14.4` using Spigot
+Vanilla Enchants has been tested on `Minecraft 1.16.4` using Paper (Spigot Derivative)
 
 ## Why does this exist?
 
@@ -15,7 +15,7 @@ I created this plugin because I was unsatisfied with the alternative options for
 - Enchantments that don't normally go on an item can be used (Ex. Efficiency on a helmet)
 - Books can enchant ANY item (not necessarily intended, but not up to doing that extra logic at the moment)
 - Mutual exclusivity is ignored (ie. you can have Smite and Sharpness on the same sword)
-- The cost of combining enchants on a book is equal to the sum total of all levels on the resulting book.
+- The cost of combining enchants on any item is equal to the sum total of all levels on the resulting item.
   - Ex: Book 1 has Looting IV, Book 2 has Power II, the cost to combine them would be (4 + 2) = 6
 
 ## Installation
