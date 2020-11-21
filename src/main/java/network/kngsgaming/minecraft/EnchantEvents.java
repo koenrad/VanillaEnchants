@@ -40,6 +40,7 @@ public class EnchantEvents implements Listener {
         try {
             debug = plugin.config.getString("debug").toLowerCase().equals("true");
         } catch (Error e){
+            e.printStackTrace();
             debug = false;
             plugin.printToConsole("debug: not 'true', set to false");
         }
@@ -54,7 +55,6 @@ public class EnchantEvents implements Listener {
 
         ItemStack leftItem = inventory.getItem(0);
         ItemStack rightItem = inventory.getItem(1);
-        ItemStack resultItem;
         //check if both item slots are filled
         if (leftItem != null && rightItem != null) {
             //check to see if there is a book
@@ -63,6 +63,7 @@ public class EnchantEvents implements Listener {
 
             //if the items are the same type OR one of the items is a book
             if (leftItem.getType() == rightItem.getType() || leftIsBook || rightIsBook) {
+                ItemStack resultItem = leftItem.clone();
                 //use the enchants on the left item as a base
                 Map<Enchantment, Integer> resultingEnchantments;
                 Map<Enchantment, Integer> addedEnchantments;
@@ -108,29 +109,30 @@ public class EnchantEvents implements Listener {
                     }
                 }
                 
-                //check for repairability
+                //check if items are damageable
                 boolean leftDamageable = leftItem.getItemMeta() instanceof Damageable;
                 boolean rightDamageable = rightItem.getItemMeta() instanceof Damageable;
                 if ( leftDamageable && rightDamageable ) {
-                    int damage0 = ((Damageable) leftItem.getItemMeta()).getDamage();
-                    int damage1 = ((Damageable) rightItem.getItemMeta()).getDamage();
-                    int maxdamage = (leftItem.getType()).getMaxDurability();
-                    //damage is calculated as "hits taken", not "life"
-                    int durability = (maxdamage - damage0) + (maxdamage - damage1) + (int) Math.floor(0.12 * maxdamage);
-                    // create undamaged item state
-                    int damage = 0;
-                    // if not enough durability to create undamaged item, set damage accordingly
-                    if (durability < maxdamage) { 
-                        damage = maxdamage - durability; 
+                    //check if left item is damaged
+                    if (((Damageable) leftItem.getItemMeta()).hasDamage()) {
+                        int damage0 = ((Damageable) leftItem.getItemMeta()).getDamage();
+                        int damage1 = ((Damageable) rightItem.getItemMeta()).getDamage();
+                        int maxdamage = (leftItem.getType()).getMaxDurability();
+                        //damage is calculated as "hits taken", not "life"
+                        int durability = (maxdamage - damage0) + (maxdamage - damage1) + (int) Math.floor(0.12 * maxdamage);
+                        // create undamaged item state
+                        int damage = 0;
+                        // if not enough durability to create undamaged item, set damage accordingly
+                        if (durability < maxdamage) { 
+                            damage = maxdamage - durability; 
+                        }
+                        ItemMeta resultMeta = resultItem.getItemMeta();
+                        ((Damageable) resultMeta).setDamage(damage);
+                        resultItem.setItemMeta(resultMeta);
                     }
-                    resultItem = leftItem.clone();
-                    ItemMeta resultMeta = resultItem.getItemMeta();
-                    ((Damageable) resultMeta).setDamage(damage);
-                    resultItem.setItemMeta(resultMeta);
                 }
                 //nothing to repair
                 else {
-                    resultItem = leftItem.clone();
                 }
 
                 //debug for ops
@@ -166,15 +168,13 @@ public class EnchantEvents implements Listener {
 
                 }
 
-                //Cost is almost always 1 if you are putting things on a book, so let's change that!
-                if (leftIsBook) {
-                    //repair cost will be the sum total of all enchant levels on the resulting book!
-                    int repairCost = 0;
-                    for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
-                        repairCost += entry.getValue();
-                    }
-                    inventory.setRepairCost(repairCost);
+                //Cost is very odd, so standardize!
+                //repair cost will be the sum total of all enchant levels on the resulting item!
+                int repairCost = 0;
+                for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
+                    repairCost += entry.getValue();
                 }
+                inventory.setRepairCost(repairCost);
 
                 event.setResult(resultItem);
 
