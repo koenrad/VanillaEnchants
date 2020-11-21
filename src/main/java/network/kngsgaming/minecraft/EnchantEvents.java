@@ -41,7 +41,7 @@ public class EnchantEvents implements Listener {
             debug = plugin.config.getString("debug").toLowerCase().equals("true");
         } catch (Error e){
             debug = false;
-            plugin.printToConsole("debug: false");
+            plugin.printToConsole("debug: not 'true', set to false");
         }
 
     }
@@ -116,16 +116,16 @@ public class EnchantEvents implements Listener {
                     int damage1 = ((Damageable) rightItem.getItemMeta()).getDamage();
                     int maxdamage = (leftItem.getType()).getMaxDurability();
                     //damage is calculated as "hits taken", not "life"
-                    int durability = (maxdamage - damage0) + (maxdamage - damage1);
+                    int durability = (maxdamage - damage0) + (maxdamage - damage1) + (int) Math.floor(0.12 * maxdamage);
+                    // create undamaged item state
+                    int damage = 0;
+                    // if not enough durability to create undamaged item, set damage accordingly
                     if (durability < maxdamage) { 
-                        durability = maxdamage - durability; 
-                    }
-                    else if (durability >= maxdamage) {
-                        durability = 0;
+                        damage = maxdamage - durability; 
                     }
                     resultItem = leftItem.clone();
                     ItemMeta resultMeta = resultItem.getItemMeta();
-                    ((Damageable) resultMeta).setDamage(durability);
+                    ((Damageable) resultMeta).setDamage(damage);
                     resultItem.setItemMeta(resultMeta);
                 }
                 //nothing to repair
@@ -149,7 +149,7 @@ public class EnchantEvents implements Listener {
                     for (Map.Entry<Enchantment, Integer> entry : originalEnchantments.entrySet()) {
                         resultItemMeta.removeStoredEnchant(entry.getKey());
                     }
-                    //set new engchants
+                    //set new enchants
                     for (Map.Entry<Enchantment, Integer> entry : resultingEnchantments.entrySet()) {
                         resultItemMeta.addStoredEnchant(entry.getKey(), entry.getValue(), true);
                     }
