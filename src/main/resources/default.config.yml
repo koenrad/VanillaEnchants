@@ -51,7 +51,7 @@ limits:
   flame: 1
   fortune: 3
   frost_walker: 2
-  imaling: 5
+  impaling: 5
   infinity: 1
   knockback: 2
   looting: 3
@@ -71,6 +71,7 @@ limits:
   sharpness: 5
   silk_touch: 1
   smite: 5
+  soul_speed: 3
   sweeping: 3            # this is Sweeping Edge
   thorns: 3
   unbreaking: 3
