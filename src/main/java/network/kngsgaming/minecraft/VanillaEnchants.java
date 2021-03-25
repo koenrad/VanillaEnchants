@@ -25,7 +25,7 @@ public class VanillaEnchants extends JavaPlugin {
         }
 
         try {
-            enabled = config.getString("enable_vanilla_enchants").toLowerCase().equals("true");
+            enabled = config.getString("enable_vanilla_enchants").equalsIgnoreCase("true");
         } catch (Error e) {
             printToConsole(ChatColor.RED + "Could not get config, disabling VanillaEnchants");
             enabled = false;
@@ -33,9 +33,9 @@ public class VanillaEnchants extends JavaPlugin {
 
         if (enabled) {
             EnchantEvents eventHandler = new EnchantEvents(this);
-            printToConsole(ChatColor.GREEN + "Enabled");
+            printToConsole(ChatColor.GREEN + "VanillaEnchants enabled. Plugin by koenrad, book fix by StanEXE");
         } else {
-            printToConsole(ChatColor.RED + "Disabled");
+            printToConsole(ChatColor.RED + "VanillaEnchants disabled.");
         }
 
     }
