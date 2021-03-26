@@ -33,7 +33,7 @@ public class VanillaEnchants extends JavaPlugin {
 
         if (enabled) {
             EnchantEvents eventHandler = new EnchantEvents(this);
-            printToConsole(ChatColor.GREEN + "VanillaEnchants enabled. Plugin by koenrad, book fix by StanEXE");
+            printToConsole(ChatColor.GREEN + "VanillaEnchants enabled.");
         } else {
             printToConsole(ChatColor.RED + "VanillaEnchants disabled.");
         }
