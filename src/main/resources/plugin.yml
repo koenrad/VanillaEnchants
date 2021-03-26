@@ -1,6 +1,6 @@
 name: VanillaEnchants
 version: 1.3
 main: network.kngsgaming.minecraft.VanillaEnchants
-authors:  [koenrad, StanEXE]
+author:  koenrad
 website: https://koenrad.macbri.de
 api-version: 1.14
